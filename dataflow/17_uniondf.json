@@ -1,0 +1,91 @@
+{
+	"name": "17_uniondf",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTable6",
+						"type": "DatasetReference"
+					},
+					"name": "dcsource"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTable7",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "adresstableds",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "union1"
+				},
+				{
+					"name": "sort1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          FirstName as string,",
+				"          LastName as string,",
+				"          CompanyName as string,",
+				"          SubTotal as decimal(19,4),",
+				"          TaxAmt as decimal(19,4),",
+				"          Description as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> dcsource",
+				"source(output(",
+				"          FirstName as string,",
+				"          LastName as string,",
+				"          CompanyName as string,",
+				"          SubTotal as decimal(19,4),",
+				"          TaxAmt as decimal(19,4),",
+				"          Description as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source1",
+				"dcsource, source1 union(byName: true)~> union1",
+				"union1 sort(asc(FirstName, true),",
+				"     desc(LastName, true)) ~> sort1",
+				"sort1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          AddressID as integer,",
+				"          AddressLine1 as string,",
+				"          AddressLine2 as string,",
+				"          City as string,",
+				"          StateProvince as string,",
+				"          CountryRegion as string,",
+				"          PostalCode as string,",
+				"          rowguid as string,",
+				"          ModifiedDate as timestamp",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+			]
+		}
+	}
+}

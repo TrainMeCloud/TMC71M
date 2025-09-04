@@ -1,0 +1,53 @@
+{
+	"name": "DelimitedText3",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"paramfilename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().paramfilename",
+					"type": "Expression"
+				},
+				"fileSystem": "foreachcont"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "CustomerID",
+				"type": "String"
+			},
+			{
+				"name": "FirstName",
+				"type": "String"
+			},
+			{
+				"name": "MiddleName",
+				"type": "String"
+			},
+			{
+				"name": "LastName",
+				"type": "String"
+			},
+			{
+				"name": "CompanyName",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

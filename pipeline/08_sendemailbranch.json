@@ -1,0 +1,88 @@
+{
+	"name": "08_sendemailbranch",
+	"properties": {
+		"activities": [
+			{
+				"name": "Execute Pipeline1",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "01_copydata",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BU",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Execute Pipeline1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"url": "https://prod-05.centralus.logic.azure.com:443/workflows/7847055016864dc8a547e4a327bab47c/triggers/When_a_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=eA1eGKfKN_eCXu9flBmPEU-8zCchrdcgYLLHRPd6m0o",
+					"body": {
+						"Message": "Current pipeline is success",
+						"DataFactoryName": "@{pipeline().DataFactory}",
+						"PipelineName": "@{pipeline().Pipeline}",
+						"emailto": "siva@gmail.com",
+						"Subject": "Pipeline Success!"
+					}
+				}
+			},
+			{
+				"name": "Developer",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Execute Pipeline1",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"url": "https://prod-05.centralus.logic.azure.com:443/workflows/7847055016864dc8a547e4a327bab47c/triggers/When_a_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=eA1eGKfKN_eCXu9flBmPEU-8zCchrdcgYLLHRPd6m0o",
+					"body": {
+						"Message": "Current pipeline failed",
+						"DataFactoryName": "@{pipeline().DataFactory}",
+						"PipelineName": "@{pipeline().Pipeline}",
+						"emailto": "deepakmanglani99@gmail.com",
+						"Subject": "Pipeline Failed!"
+					}
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2025-08-26T04:48:06Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

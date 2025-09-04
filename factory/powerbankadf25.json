@@ -1,0 +1,9 @@
+{
+	"name": "powerbankadf25",
+	"location": "centralus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "cb9f9eb3-1ec0-451a-ada5-a81c49347b9a",
+		"tenantId": "c9515ae6-7419-4ae5-a700-4bb5f4afa7dc"
+	}
+}

@@ -1,0 +1,96 @@
+{
+	"name": "16_aggregatedf",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTable4",
+						"type": "DatasetReference"
+					},
+					"name": "joinsource"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTable8",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "select1"
+				},
+				{
+					"name": "aggregate1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          CustomerID as integer,",
+				"          NameStyle as boolean,",
+				"          Title as string,",
+				"          FirstName as string,",
+				"          MiddleName as string,",
+				"          LastName as string,",
+				"          Suffix as string,",
+				"          CompanyName as string,",
+				"          SalesPerson as string,",
+				"          EmailAddress as string,",
+				"          Phone as string,",
+				"          PasswordHash as string,",
+				"          PasswordSalt as string,",
+				"          rowguid as string,",
+				"          ModifiedDate as timestamp,",
+				"          SalesOrderID as integer,",
+				"          RevisionNumber as integer,",
+				"          OrderDate as timestamp,",
+				"          DueDate as timestamp,",
+				"          ShipDate as timestamp,",
+				"          Status as integer,",
+				"          OnlineOrderFlag as boolean,",
+				"          SalesOrderNumber as string,",
+				"          PurchaseOrderNumber as string,",
+				"          AccountNumber as string,",
+				"          ShipToAddressID as integer,",
+				"          BillToAddressID as integer,",
+				"          ShipMethod as string,",
+				"          CreditCardApprovalCode as string,",
+				"          SubTotal as decimal(19,4),",
+				"          TaxAmt as decimal(19,4),",
+				"          Freight as decimal(19,4),",
+				"          TotalDue as decimal(19,4),",
+				"          Comment as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> joinsource",
+				"joinsource select(mapColumn(",
+				"          Title,",
+				"          SubTotal,",
+				"          TaxAmt",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 aggregate(groupBy(Title),",
+				"     SubTotal = sum(SubTotal),",
+				"          TaxAmt = sum(TaxAmt)) ~> aggregate1",
+				"aggregate1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+			]
+		}
+	}
+}
